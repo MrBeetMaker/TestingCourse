@@ -1,8 +1,12 @@
 ### Introduction
-Links to an external site. module implements binary protocols for serializing and de-serializing a Python object structure. “Pickling” is the process whereby a Python object hierarchy is converted into a byte stream, and “unpickling” is the inverse operation, whereby a byte stream (from a binary file Links to an external site. or bytes-like object Links to an external site.) is converted back into an object hierarchy. Pickling (and unpickling) is alternatively known as “serialization”, “marshalling,” [1] Links to an external site. or “flattening”; however, to avoid confusion, the terms used here are “pickling” and “unpickling”. [source Links to an external site.]
+Links to an external site. module implements binary protocols for serializing and de-serializing a Python object structure. “Pickling” is the process whereby a Python object hierarchy is converted into a byte stream, and “unpickling” is the inverse operation, whereby a byte stream (from a binary file Links to an external site, or bytes-like object Links to an external site.) is converted back into an object hierarchy. Pickling (and unpickling) is alternatively known as “serialization”, “marshalling,” [1] 
+Links to an external site. or “flattening”; however, to avoid confusion, the terms used here are “pickling” and “unpickling”. [source Links to an external site.]
 
 ## Assignment
-I would like to understand how stable and correct pickle is: Does the same input always create the same (serialized) output? We define the same input and output as hash-identical (equivalent is insufficient). This means an input must create the same pickle file under all circumstances. Possible options are different operating systems, different Python (but not pickle) versions, floating point accuracy, and recursive data structures. 
+I would like to understand how stable and correct pickle is: 
+- Does the same input always create the same (serialized) output? We define the same input and output as hash-identical (equivalent is insufficient). 
+- This means an input must create the same pickle file under all circumstances. 
+- Possible options are different operating systems, different Python (but not pickle) versions, floating point accuracy, and recursive data structures.
 
 Please keep your mind open to other options. Please make sure to consider only the exact same input: Of course, if you alter the input (e.g., x = 2+3 to x = 3+2 or renaming variables), the results may be equivalent but are no longer identical when you hash the resulting pickle file (e.g., sha256).
 
