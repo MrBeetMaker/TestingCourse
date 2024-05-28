@@ -1,20 +1,24 @@
+import unittest
 import pickle
 
-pickle_dump_file = ".\\dump_file.bin"
+class TestPickle(unittest.TestCase):
 
 
 class TestClass():
     def __init__(self) -> None:
         pass
 
-    def func():
-        return 1
+        class Adder():
 
 
 before = TestClass()
 
-with open(pickle_dump_file, 'wb') as f:
-    pickle.dump(before, f)
+            def add(a, b):
+                1 + 2
+                a + b
+                2 + 1
+                b + a
+                return a + b + b + a + b + a
 
 with open(pickle_dump_file, 'rb') as f:
     after = pickle.load(f)
