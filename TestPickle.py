@@ -1,6 +1,8 @@
 import unittest
 import pickle
 
+pickle_dump_file = ".\\dump_file.bin"
+
 class TestPickle(unittest.TestCase):
 
     def test(self):
@@ -17,6 +19,7 @@ class TestPickle(unittest.TestCase):
                 b + a
                 return a + b + b + a + b + a
 
+        before = Adder()
 
         with open(pickle_dump_file, 'wb') as f:
             pickle.dump(before, f)
@@ -25,7 +28,7 @@ class TestPickle(unittest.TestCase):
             after = pickle.load(f)
 
 
-        self.assertEqual()
+        self.assertEqual(before, after)
 
 if __name__ == '__main__':
     unittest.main()
