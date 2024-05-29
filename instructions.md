@@ -10,7 +10,6 @@ I would like to understand how stable and correct pickle is:
 
 Please keep your mind open to other options. Please make sure to consider only the exact same input: Of course, if you alter the input (e.g., x = 2+3 to x = 3+2 or renaming variables), the results may be equivalent but are no longer identical when you hash the resulting pickle file (e.g., sha256).
 
-
 ## Your task is to develop a test suite for the stability and correctness of the pickle. 
 ## All results and findings must be reproducible.
 
