@@ -4,13 +4,15 @@ import hashlib
 import platform
 import sys
 
-
 class SimpleClass:
     def __init__(self, value):
         self.value = value
 
     def add(a, b):
-        return a + b + b + a + b + a
+        return a + b
+
+    def piss(c, t):
+        return 1100
 
 class RecursiveClass:
     def __init__(self):
@@ -45,10 +47,9 @@ class TestPickle(unittest.TestCase):
         unpickled_data = pickle.loads(pickled_data)
         return unpickled_data
 
-    def assertUnpickleEqual(self, data):
+    def assertUnchanged(self, data):
         """Asserts that the data is the same before and after being unpickled."""
-        
-        unpickled_data = self.pickle_and_unpickle(data)        
+        unpickled_data = self.pickle_and_unpickle(data)
         self.assertEquals(data, unpickled_data)
 
     def assertPickleHashIdentical(self, data):
@@ -93,6 +94,35 @@ class TestPickle(unittest.TestCase):
     def test_recursive_class(self):
         self.assertPickleHashIdentical(RecursiveClass())
 
-if __name__ == '__main__':
+    def test_int_unchanged(self):
+        self.assertUnchanged(42)
 
+    def test_function_unchanged(self):
+        self.assertUnchanged(pow)
+
+    def test_float_unchanged(self):
+        self.assertUnchanged(3.1415926535)
+
+    def test_string_unchanged(self):
+        self.assertUnchanged("Hello, World!")
+
+    def test_list_unchanged(self):
+        self.assertUnchanged([1, 2, 3, 4, 5])
+
+    def test_dict_unchanged(self):
+        self.assertUnchanged({"key1": "value1", "key2": "value2"})
+
+    def test_empty_list_unchanged(self):
+        self.assertUnchanged([])
+
+    def test_empty_dict_unchanged(self):
+        self.assertUnchanged({})
+
+    def test_simple_class_unchanged(self):
+        self.assertUnchanged(SimpleClass(10))
+
+    def test_recursive_class_unchanged(self):
+        self.assertUnchanged(RecursiveClass())
+
+if __name__ == '__main__':
     unittest.main()
