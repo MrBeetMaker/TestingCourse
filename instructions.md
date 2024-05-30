@@ -4,7 +4,7 @@ Links to an external site. or “flattening”; however, to avoid confusion, the
 
 ## Assignment
 I would like to understand how stable and correct pickle is: 
-- Does the same input always create the same (serialized) output? We define the same input and output as hash-identical (equivalent is insufficient). 
+- Does the same input always create the same (serialized) output? We define the input and output as hash-identical (equivalent is insufficient). 
 - This means an input must create the same pickle file under all circumstances. 
 - Possible options are different operating systems, different Python (but not pickle) versions, floating point accuracy, and recursive data structures.
 
