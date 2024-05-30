@@ -1,5 +1,5 @@
 import unittest
-import pickle
+import stolen_pickle as pickle
 import hashlib
 import platform
 import sys
