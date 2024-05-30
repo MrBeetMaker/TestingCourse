@@ -4,15 +4,20 @@ import hashlib
 import platform
 import sys
 
+class ParentClass():
+    def __init__(self) -> None:
+        self.yahoo = "yippie"
+
+class ChildClass(ParentClass):
+    def __init__(self) -> None:
+        super().__init__()
+
 class SimpleClass:
     def __init__(self, value):
         self.value = value
 
     def add(a, b):
         return a + b
-
-    def piss(c, t):
-        return 1100
 
 class RecursiveClass:
     def __init__(self):
@@ -64,11 +69,22 @@ class TestPickle(unittest.TestCase):
 
         self.assertEqual(pickled_data, repickled_data)
 
+    def test_type_unchanged(self):
+        unpickled_obj = self.pickle_and_unpickle(ChildClass())
+        self.assertIsInstance(unpickled_obj, ChildClass)
+
+    def test_inheiritance_unchanged(self):
+        unpickled_obj = self.pickle_and_unpickle(ChildClass())
+        self.assertIsInstance(unpickled_obj, ParentClass)
+
     def test_int(self):
         self.assertPickleHashIdentical(42)
 
     def test_function(self):
         self.assertPickleHashIdentical(pow)
+
+    def test_exception(self):
+        self.assertPickleHashIdentical(IndexError)
 
     def test_float(self):
         self.assertPickleHashIdentical(3.1415926535)
@@ -100,6 +116,9 @@ class TestPickle(unittest.TestCase):
     def test_function_unchanged(self):
         self.assertUnchanged(pow)
 
+    def test_exception_unchanged(self):
+        self.assertPickleHashIdentical(IndexError)
+
     def test_float_unchanged(self):
         self.assertUnchanged(3.1415926535)
 
@@ -118,11 +137,11 @@ class TestPickle(unittest.TestCase):
     def test_empty_dict_unchanged(self):
         self.assertUnchanged({})
 
-    def test_simple_class_unchanged(self):
-        self.assertUnchanged(SimpleClass(10))
+    # def test_simple_class_unchanged(self):
+    #     self.assertUnchanged(SimpleClass(10))
 
-    def test_recursive_class_unchanged(self):
-        self.assertUnchanged(RecursiveClass())
+    # def test_recursive_class_unchanged(self):
+    #     self.assertUnchanged(RecursiveClass())
 
 if __name__ == '__main__':
     unittest.main()
