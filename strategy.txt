@@ -1,0 +1,42 @@
+
+
+What is a Traceability Matrix?
+
+    A traceability matrix is a document used in software development and testing 
+    to ensure that all requirements defined for a system are tested in the test protocols. 
+
+    It maps and traces user requirements with test cases.
+    The primary purpose is to ensure that all requirements are covered by test cases, 
+    thereby guaranteeing that no functionality is left untested.
+
+
+What Should It Contain?
+
+    Requirement ID: 
+        Unique identifier for each requirement.
+    Requirement Description: 
+        Brief description of the requirement.
+    Test Case ID: 
+        Unique identifier for each test case.
+    Test Case Description: 
+        Brief description of what the test case does.
+    Status: 
+        Indicates whether the test case has been executed and its outcome (pass/fail).
+    Comments: 
+        Any additional information or observations.
+
+Steps to Create a Traceability Matrix
+
+    List All Requirements:
+        Identify all the requirements that need to be tested. These should be detailed and uniquely identified.
+    List All Test Cases:
+        Identify or create all test cases that will be used to verify the requirements.
+    Map Requirements to Test Cases:
+        Create a matrix that links each requirement to its corresponding test case(s).
+    Execute Test Cases:
+        Run the test cases and record the results.
+    Update the Matrix:
+        Reflect the status of each test case in the matrix.
+
+
+
