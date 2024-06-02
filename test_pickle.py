@@ -21,11 +21,11 @@ class TestPickle():
     def pickle_unpickle_repickle_and_hash(self, data) -> tuple:
         """Pickles the data, unpickles it, pickles it again and hashes it.
         
-        Returns the hash, the pickled data, and the repickled data."""
+        Returns the hash, the pickled data, the unpickled object, and the repickled data."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
         unpickled_data = pickle.loads(pickled_data)
         re_pickled_data = pickle.dumps(unpickled_data, protocol=self.protocol)
-        return hashlib.sha256(re_pickled_data, usedforsecurity= False).hexdigest(), pickled_data, re_pickled_data
+        return hashlib.sha256(re_pickled_data, usedforsecurity= False).hexdigest(), pickled_data, unpickled_data, re_pickled_data
 
     def pickle_and_unpickle(self, data):
         """Returns data after it has been pickled and unpickled."""
@@ -58,12 +58,31 @@ class TestPickle():
         return test_cases
 
     def run_tests(self):
+        unpickled_objects = list()
         for i, test_case in enumerate(self.test_cases):
-            self.process(test_case, i)
+            obj = self.process(test_case, i)
+            unpickled_objects.append(obj)
+        self.validate_unpickled_data(unpickled_objects)
 
         self.validate_test_results()
 
         self.test_for_mismatches()
+
+    def validate_unpickled_data(self, unpickled_data):
+        """Makes sure the unpickled data is unchanged."""
+
+        nr_of_changed_objects = 0
+        for test_nr, (original, unpickled) in enumerate(zip(self.test_cases, unpickled_data)):
+
+            if unpickled != original:
+                print(f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}")
+                nr_of_changed_objects += 1
+
+        if nr_of_changed_objects:
+            print(f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n")
+        else:
+            print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
+
 
     def test_for_mismatches(self, iterations = 10000):
         """Pickles the same data many times to see if the result is always the same."""
@@ -96,11 +115,13 @@ class TestPickle():
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
-        re_phash, pickled_data_2, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
+        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
 
         # Save the data
         with open(self.file_name, "a") as f:
             f.write(f"{test_nr};{pickled_data_1};{pickled_data_2};{repickled_data};{phash};{re_phash}\n")
+
+        return unpickled_data
 
     def validate_test_results(self):
 
