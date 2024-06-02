@@ -38,5 +38,11 @@ Steps to Create a Traceability Matrix
     Update the Matrix:
         Reflect the status of each test case in the matrix.
 
+. . . 
 
+Requirements:
+    The same input always gives an identical output.
+    The unpickled data is equal to the original data.
+
+Pickle a sizable amount of data 999999 times and compare all of the pickles.
 
