@@ -11,6 +11,27 @@ class TestPickle():
         python_version = sys.version.split()[0]
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
+        print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+
+    def pickle_and_hash(self, data) -> tuple:
+        """Returns the hash and the pickled data."""
+        pickled_data = pickle.dumps(data, protocol=self.protocol)
+        return hashlib.sha256(pickled_data, usedforsecurity= False).hexdigest(), pickled_data
+
+    def pickle_unpickle_repickle_and_hash(self, data) -> tuple:
+        """Pickles the data, unpickles it, pickles it again and hashes it.
+        
+        Returns the hash, the pickled data, and the repickled data."""
+        pickled_data = pickle.dumps(data, protocol=self.protocol)
+        unpickled_data = pickle.loads(pickled_data)
+        re_pickled_data = pickle.dumps(unpickled_data, protocol=self.protocol)
+        return hashlib.sha256(re_pickled_data, usedforsecurity= False).hexdigest(), pickled_data, re_pickled_data
+
+    def pickle_and_unpickle(self, data):
+        """Returns data after it has been pickled and unpickled."""
+        pickled_data = pickle.dumps(data, protocol=self.protocol)
+        unpickled_data = pickle.loads(pickled_data)
+        return unpickled_data
 
     @property
     def test_cases(self):
@@ -44,39 +65,21 @@ class TestPickle():
 
         self.test_for_mismatches()
 
-    def pickle_and_hash(self, data) -> tuple:
-        """Returns the hash and the pickled data."""
-        pickled_data = pickle.dumps(data, protocol=self.protocol)
-        return hashlib.sha256(pickled_data, usedforsecurity= False).hexdigest(), pickled_data
-
-    def pickle_unpickle_repickle_and_hash(self, data) -> tuple:
-        """Pickles the data, unpickles it, pickles it again and hashes it.
-        
-        Returns the hash, the pickled data, and the repickled data."""
-        pickled_data = pickle.dumps(data, protocol=self.protocol)
-        unpickled_data = pickle.loads(pickled_data)
-        re_pickled_data = pickle.dumps(unpickled_data, protocol=self.protocol)
-        return hashlib.sha256(re_pickled_data, usedforsecurity= False).hexdigest(), pickled_data, re_pickled_data
-
-    def pickle_and_unpickle(self, data):
-        """Returns data after it has been pickled and unpickled."""
-        pickled_data = pickle.dumps(data, protocol=self.protocol)
-        unpickled_data = pickle.loads(pickled_data)
-        return unpickled_data
-
     def test_for_mismatches(self, iterations = 10000):
         """Pickles the same data many times to see if the result is always the same."""
 
-        errors = []             # list of set
+        import random
+        errors = []
         print(f"Pickling each test case {iterations} times to find mismatches:")
         for test_nr, test_case in enumerate(self.test_cases):
+            self.protocol = random.randint(0, 5)
             first_pickled_data = pickle.dumps(test_case, protocol=self.protocol)
-            errors.append({first_pickled_data})
+            errors.append([first_pickled_data])
             for _ in range(iterations):
                 newly_pickled_data = pickle.dumps(test_case, protocol=self.protocol)
 
                 if newly_pickled_data != first_pickled_data:
-                    errors[test_nr].add(newly_pickled_data)
+                    errors[test_nr].append(newly_pickled_data)
 
         for test_nr, mismatch in enumerate(errors):
             if len(mismatch) > 1:
@@ -86,7 +89,6 @@ class TestPickle():
                 print(f"\tTest case #{test_nr}:{m_string}")
             else:
                 print(f"\tTest case #{test_nr}: - no mismatch")
-
 
     def process(self, data, test_nr):
         """Collects and saves two separate dumps of the pickled data, the repickled data, 

@@ -63,9 +63,6 @@ class TestPickle(unittest.TestCase):
         """
         Asserts that the hashes of the data is the same after being pickled once, unpickled and then pickled again.
         Appends the results to the results file.
-        
-        
-        
         """
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
