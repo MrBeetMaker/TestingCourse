@@ -10,6 +10,7 @@ class ParentClass():
 
 class ChildClass(ParentClass):
     def __init__(self) -> None:
+        self.p = 0.05
         super().__init__()
 
 class SimpleClass:

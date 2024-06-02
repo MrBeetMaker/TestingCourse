@@ -43,6 +43,9 @@ Steps to Create a Traceability Matrix
 Requirements:
     The same input always gives an identical output.
     The unpickled data is equal to the original data.
+    The output should be the same for both Windows and Ubuntu.
+    The output should be the same for python 3.8, 3.9 and 3.10.
+
 
 Pickle a sizable amount of data 999999 times and compare all of the pickles.
 
