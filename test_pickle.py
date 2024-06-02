@@ -83,15 +83,11 @@ class TestPickle():
         else:
             print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
-
     def test_for_mismatches(self, iterations = 10000):
         """Pickles the same data many times to see if the result is always the same."""
-
-        import random
         errors = []
         print(f"Pickling each test case {iterations} times to find mismatches:")
         for test_nr, test_case in enumerate(self.test_cases):
-            self.protocol = random.randint(0, 5)
             first_pickled_data = pickle.dumps(test_case, protocol=self.protocol)
             errors.append([first_pickled_data])
             for _ in range(iterations):
