@@ -12,8 +12,9 @@ class TestPickle():
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
         self.delim = '|^^|'
-        print(
-            f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+        print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+
+        self.max_deviation = 0.001          # Seconds (for requirement 9).
 
         self.requirements = {
             1: "Pickling and unpickling integers within and at the edges of the signed 64-bit range.",
@@ -24,31 +25,25 @@ class TestPickle():
             6: "Pickling and unpickling special characters",
             7: "Pickling and unpickling lists of floats, integers, and strings with 64 elements or less should return equivalent output.",
             8: "Pickling and unpickling tuples and sets should maintain the order of elements.",
-            9: "Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than 10 milliseconds."
+            9: f"Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than {self.max_deviation} seconds."
         }
 
         self._test_case_map = [
             (1337,                      1),
             (2 ** 63 - 1,               1),
             (-(2 ** 63 - 1),            1),
-
             (2**63 + 100,               2),
             (2**64 - 1,                 2),
             (2**64,                     2),
-
             (10.0,                      3),
             (0.000280000000015,         3),
-
             (0.1234567890123456,                            4),
             (0.1234567890123456789,                         4),
             (987654321.123456789012345678901234,            4),
-
             ("No one inspects the spammish repetition",     5),
             ("e" * 128,                                     5),
             ("",                                            5),
-
             ("\u3244, \f ,\b,\n,\"",                        6),
-
             ([],                        7),
             ([0.324],                   7),
             ([234],                     7),
@@ -59,6 +54,8 @@ class TestPickle():
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
         ]
+
+
         self.test_cases = [pair[0] for pair in self._test_case_map]
         self.test_status = {i: list() for i in range(len(self.test_cases))}
 
@@ -94,6 +91,8 @@ class TestPickle():
 
         self.test_for_mismatches()
 
+        self.test_pickle_duration_stability()
+
     def validate_unpickled_data(self, unpickled_data):
         """Makes sure the unpickled data is unchanged."""
 
@@ -111,14 +110,14 @@ class TestPickle():
             print(msg)
 
         else:
-            print(
-                f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
+            print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
-    def test_duration_deviation(self, iterations=10000):
-
-        max_deviation = 0.001      # Seconds
+    def test_pickle_duration_stability(self, iterations=100000):
 
         for test_nr, test_case in enumerate(self.test_cases):
+
+            if not isinstance(test_case, (float, int, str)):
+                continue
 
             durations = []
             for _ in range(iterations):
@@ -126,8 +125,9 @@ class TestPickle():
                 pickle.dumps(test_case, protocol=self.protocol)
                 durations.append(perf_counter() - start)
 
-            if max(durations) - min(durations) > max_deviation:
-                print("FUCK")
+            if max(durations) - min(durations) > self.max_deviation:
+                msg = f"Test case #{test_nr} can differ by {max(durations) - min(durations)} seconds, which is more than {self.max_deviation}."
+                print(msg)
 
     def test_for_mismatches(self, iterations=10000):
         """Pickles the same data many times to see if the result is always the same."""
@@ -167,8 +167,7 @@ class TestPickle():
 
         # Save the data
         with open(self.file_name, "a") as f:
-            f.write(
-                f"{test_nr}{self.delim}{pickled_data_1}{self.delim}{pickled_data_2}{self.delim}{repickled_data}{self.delim}{phash}{self.delim}{re_phash}\n")
+            f.write(f"{test_nr}{self.delim}{pickled_data_1}{self.delim}{pickled_data_2}{self.delim}{repickled_data}{self.delim}{phash}{self.delim}{re_phash}\n")
 
         return unpickled_data
 
