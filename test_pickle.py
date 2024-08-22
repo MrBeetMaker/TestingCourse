@@ -44,20 +44,19 @@ class TestPickle():
             ("e" * 128,                                     5),
             ("",                                            5),
             ("\u3244, \f ,\b,\n,\"",                        6),
-            ([],                        7),
-            ([0.324],                   7),
-            ([234],                     7),
-            (["ddsf"],                  7),
-            ([0.324, 234, "3dsf"],      7),
-            ([i for i in range(64)],    7),
-            ([i for i in range(65)],    7),
+            ([],                                    7),
+            ([0.324],                               7),
+            ([234],                                 7),
+            (["ddsf"],                              7),
+            ([0.324, 234, "3dsf"],                  7),
+            ([i for i in range(64)],                7),
+            ([i for i in range(65)],                7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
         ]
 
-
         self.test_cases = [pair[0] for pair in self._test_case_map]
-        self.test_status = {i: list() for i in range(len(self.test_cases))}
+        self.test_status = {i: list() for i in range(len(self.test_cases) + 3)}         # Plus 3 for the test on requirement #9
 
     def pickle_and_hash(self, data) -> tuple:
         """Returns the hash and the pickled data."""
@@ -116,7 +115,13 @@ class TestPickle():
 
         for test_nr, test_case in enumerate(self.test_cases):
 
-            if not isinstance(test_case, (float, int, str)):
+            if isinstance(test_case, int):
+                test_id = len(self.test_cases)
+            if isinstance(test_case, float):
+                test_id = len(self.test_cases) - 1
+            if isinstance(test_case, str):
+                test_id = len(self.test_cases) - 2
+            else:
                 continue
 
             durations = []
@@ -125,9 +130,12 @@ class TestPickle():
                 pickle.dumps(test_case, protocol=self.protocol)
                 durations.append(perf_counter() - start)
 
+            msg = ""
             if max(durations) - min(durations) > self.max_deviation:
                 msg = f"Test case #{test_nr} can differ by {max(durations) - min(durations)} seconds, which is more than {self.max_deviation}."
                 print(msg)
+
+            self.test_status[test_id].append(msg)
 
     def test_for_mismatches(self, iterations=10000):
         """Pickles the same data many times to see if the result is always the same."""
