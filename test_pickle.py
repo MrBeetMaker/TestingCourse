@@ -4,6 +4,7 @@ import sys
 import hashlib
 from time import perf_counter
 
+
 class TestPickle():
 
     def __init__(self) -> None:
@@ -57,6 +58,50 @@ class TestPickle():
 
         self.test_cases = [pair[0] for pair in self._test_case_map]
         self.test_status = {i: list() for i in range(len(self.test_cases) + 3)}         # Plus 3 for the test on requirement #9
+
+    def traceability_matrix(self):
+        headers = [
+            "Requirement ID", "Requirement Description", "Test Case ID", "Test Case Status", "Comments"
+        ]
+        column_widths = [max(len(str(item)) for item in column) for column in [
+            self.requirements.keys(), self.requirements.values(), [i for i in range(len(self.test_cases))], ["Fail", "Success"], [
+                "", "ajkhdfjashd"]
+        ]]
+
+        header_widths = [len(header) for header in headers]
+
+        column_widths = [max(header_width, col_width)
+                         for header_width, col_width in zip(header_widths, column_widths)]
+
+        header_row = " | ".join(header.ljust(width)
+                                for header, width in zip(headers, column_widths))
+        print(header_row)
+        print("-" * len(header_row))
+        for req_id, req_info in self.requirements.items():
+            for test_id, (test_case, req_id_test) in enumerate(self._test_case_map):
+                if req_id == req_id_test:
+                    status = "Fail"
+                    comment = ""
+                    if not self.test_status[test_id]:
+                        status = "Success"
+
+                    else:
+                        comment = self.test_status[test_id][0][1]
+
+                    row = [
+                        f"REQ-{req_id}",
+                        req_info,
+                        f"TS-{test_id}",
+                        status,
+                        comment
+                    ]
+
+                    # formatted_row = " | ".join(str(item).ljust(
+                    #     10) for item in row)
+                    formatted_row = " | ".join(str(item).ljust(
+                        width) for item, width in zip(row, column_widths))
+
+                    print(formatted_row)
 
     def pickle_and_hash(self, data) -> tuple:
         """Returns the hash and the pickled data."""
@@ -140,7 +185,8 @@ class TestPickle():
     def test_for_mismatches(self, iterations=10000):
         """Pickles the same data many times to see if the result is always the same."""
         errors = []
-        print(f"Pickling each test case {iterations} times to find mismatches:")
+        print(
+            f"Pickling each test case {iterations} times to find mismatches:")
         for test_nr, test_case in enumerate(self.test_cases):
             first_pickled_data = pickle.dumps(
                 test_case, protocol=self.protocol)
@@ -165,7 +211,7 @@ class TestPickle():
                 print(f"\tTest case #{test_nr}: - no mismatch")
 
     def process(self, data, test_nr):
-        """Collects and saves two separate dumps of the pickled data, the repickled data, 
+        """Collects and saves two separate dumps of the pickled data, the repickled data,
         the hash of the first pickled object and the hash of the repickled object."""
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
@@ -187,7 +233,8 @@ class TestPickle():
             results_msg = ""
             for res in results:
 
-                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res.split(self.delim)
+                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res.split(
+                    self.delim)
 
                 errors = 0
                 error_msg = ""
@@ -221,3 +268,4 @@ if __name__ == "__main__":
     test = TestPickle()
     test.run_tests()
     print(test.test_status)
+    test.traceability_matrix()
