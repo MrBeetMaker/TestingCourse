@@ -36,16 +36,40 @@ Steps to Create a Traceability Matrix
     Execute Test Cases:
         Run the test cases and record the results.
     Update the Matrix:
-        Reflect the status of each test case in the matrix.
+        Reflect the status of each test case in the matrix
 
 . . . 
 
 Requirements:
+
+
+    Correctness:
+
+    9,223,372,036,854,775,807
+    18,446,744,073,709,551,61512
+
+        Original data should be equal for:                                                          Tests:
+        - Pickling and unpickling integers within and at the edges of the signed 64-bit range.      (3)
+        - Pickling and unpickling integers within the unsigned 64-bit range.                        (1)
+        - Pickling and unpickling floats with less than 16 decimals.                                (1)
+        - Pickling and unpickling floats with 16 or more decimals.                                  (2)
+        - Pickling and unpickling strings with 128 characters or less.                              (2)
+        - Pickling and unpickling an empty string.                                                  (1)
+
+        - Pickling and unpickling lists of floats, integers and strings                             (3)
+            with 64 elements or less should return equivalent output.
+        - Pickling and unpickling tuples and sets should maintain the order of elements.            (6)
+
+        - Time needed to pickle integers and floats within the                                      (3) 
+            unsigned 64-bit range, as well as equal sized strings
+            should never differ with more than 10 miliseconds.
+        
+3
+
     The same input always gives an identical output.
     The unpickled data is equal to the original data.
-    The output should be the same for both Windows and Ubuntu.
+    The pickle should be the same for both Windows and Ubuntu.
     The output should be the same for python 3.8, 3.9 and 3.10.
-
 
 Pickle a sizable amount of data 999999 times and compare all of the pickles.
 

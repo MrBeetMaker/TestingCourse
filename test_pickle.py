@@ -13,6 +13,49 @@ class TestPickle():
         self.protocol = 5
         print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
+        self.requirements = {
+            1: "Pickling and unpickling integers within and at the edges of the signed 64-bit range.",
+            2: "Pickling and unpickling integers within and at the edges of the unsigned 64-bit range.",
+            3: "Pickling and unpickling floats with less than 16 decimals.",
+            4: "Pickling and unpickling floats with 16 or more decimals.",
+            5: "Pickling and unpickling strings with 128 characters or less.",
+            6: "",
+            7: "Pickling and unpickling lists of floats, integers, and strings with 64 elements or less should return equivalent output.",
+            8: "Pickling and unpickling tuples and sets should maintain the order of elements.",
+            9: "Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than 10 milliseconds."
+        }
+
+        self._test_case_map = [
+            (1337,                      1),
+            (2 ** 63 - 1,               1),
+            (-(2 ** 63 - 1),            1),
+
+            (2**63 + 100,               2),
+            (2**64 - 1,                 2),
+            (2**64,                     2),
+
+            (10.0,                      3),
+            (0.000280000000015,         3),
+
+            (0.1234567890123456,                            4),
+            (0.1234567890123456789,                         4),
+            (987654321.123456789012345678901234,            4),
+
+            ("No one inspects the spammish repetition",     5),
+            ("e" * 128,                                     5),
+            ("",                                            5),
+
+            ([],                        7),
+            ([0.324],                   7),
+            ([234],                     7),
+            (["ddsf"],                  7),
+            ([0.324,234,"3dsf"],        7),
+            ([i for i in range(64)],    7),
+            ([i for i in range(65)],    7),
+            (("1", "2", "3", "4", "5", "6"),        8),
+            ((),                                    8),
+            ]
+
     def pickle_and_hash(self, data) -> tuple:
         """Returns the hash and the pickled data."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
@@ -30,34 +73,15 @@ class TestPickle():
     def pickle_and_unpickle(self, data):
         """Returns data after it has been pickled and unpickled."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
-        unpickled_data = pickle.loads(pickled_data)
+        unpickled_data = pickle.load(pickled_data)
+
         return unpickled_data
 
     @property
     def test_cases(self):
 
-        test_cases = [
-            42,
-            3.14159,
-            "Hello, World!",
-            [1, 2, 3, 4, 5],
-            {"key1": "value1", "key2": "value2"},
-            [],
-            {},
-            3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679,
-            "No one inspects the spammish repetition",
-            (1, 2),
-            (1, 1),
-            (2, 1),
-            ('a', 'a'),
-            ('a', 'b'),
-            [1, 4, 4, 5],
-            {'hey': [1, 2, 3], "man": ('a', 'b')},
-            {"what's": [(1, 1), (1, 1)], 'up?': ['a', 'a', ['b', 'b', ['a', 'a']]]},
-            {'hello': [], 'world': (b'1', b'2', b'2')},
-            ((((((((((((((((((((((((())))))))))))))))))))))))),
-            (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', (123, 'abc', ('abc')))))))))))))
-            ]
+        test_cases = [pair[0] for pair in self._test_case_map]
+
         return test_cases
 
     def run_tests(self):
@@ -153,5 +177,3 @@ class TestPickle():
 
 if __name__ == "__main__":
     TestPickle().run_tests()
-
-
