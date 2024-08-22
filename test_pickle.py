@@ -4,6 +4,7 @@ import sys
 import csv
 import hashlib
 
+
 class TestPickle():
 
     def __init__(self) -> None:
@@ -45,26 +46,27 @@ class TestPickle():
             ([0.324],                   7),
             ([234],                     7),
             (["ddsf"],                  7),
-            ([0.324,234,"3dsf"],        7),
+            ([0.324, 234, "3dsf"],        7),
             ([i for i in range(64)],    7),
             ([i for i in range(65)],    7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
-            ]
+        ]
+        self.test_cases = [pair[0] for pair in self._test_case_map]
 
     def pickle_and_hash(self, data) -> tuple:
         """Returns the hash and the pickled data."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
-        return hashlib.sha256(pickled_data, usedforsecurity= False).hexdigest(), pickled_data
+        return hashlib.sha256(pickled_data, usedforsecurity=False).hexdigest(), pickled_data
 
     def pickle_unpickle_repickle_and_hash(self, data) -> tuple:
         """Pickles the data, unpickles it, pickles it again and hashes it.
-        
+
         Returns the hash, the pickled data, the unpickled object, and the repickled data."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
         unpickled_data = pickle.loads(pickled_data)
         re_pickled_data = pickle.dumps(unpickled_data, protocol=self.protocol)
-        return hashlib.sha256(re_pickled_data, usedforsecurity= False).hexdigest(), pickled_data, unpickled_data, re_pickled_data
+        return hashlib.sha256(re_pickled_data, usedforsecurity=False).hexdigest(), pickled_data, unpickled_data, re_pickled_data
 
     def pickle_and_unpickle(self, data):
         """Returns data after it has been pickled and unpickled."""
@@ -72,13 +74,6 @@ class TestPickle():
         unpickled_data = pickle.load(pickled_data)
 
         return unpickled_data
-
-    @property
-    def test_cases(self):
-
-        test_cases = [pair[0] for pair in self._test_case_map]
-
-        return test_cases
 
     def run_tests(self):
         unpickled_objects = list()
@@ -98,23 +93,29 @@ class TestPickle():
         for test_nr, (original, unpickled) in enumerate(zip(self.test_cases, unpickled_data)):
 
             if unpickled != original:
-                print(f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}")
+                print(
+                    f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}")
                 nr_of_changed_objects += 1
 
         if nr_of_changed_objects:
-            print(f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n")
+            print(
+                f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n")
         else:
-            print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
+            print(
+                f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
-    def test_for_mismatches(self, iterations = 10000):
+    def test_for_mismatches(self, iterations=10000):
         """Pickles the same data many times to see if the result is always the same."""
         errors = []
-        print(f"Pickling each test case {iterations} times to find mismatches:")
+        print(
+            f"Pickling each test case {iterations} times to find mismatches:")
         for test_nr, test_case in enumerate(self.test_cases):
-            first_pickled_data = pickle.dumps(test_case, protocol=self.protocol)
+            first_pickled_data = pickle.dumps(
+                test_case, protocol=self.protocol)
             errors.append([first_pickled_data])
             for _ in range(iterations):
-                newly_pickled_data = pickle.dumps(test_case, protocol=self.protocol)
+                newly_pickled_data = pickle.dumps(
+                    test_case, protocol=self.protocol)
 
                 if newly_pickled_data != first_pickled_data:
                     errors[test_nr].append(newly_pickled_data)
@@ -134,7 +135,8 @@ class TestPickle():
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
-        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
+        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(
+            data)
 
         # Save the data
         with open(self.file_name, "a") as f:
@@ -170,6 +172,7 @@ class TestPickle():
                 results_msg += f"Test case #{test_nr}:\n\t- Errors: {errors}\n{error_msg}"
 
             print(results_msg)
+
 
 if __name__ == "__main__":
     TestPickle().run_tests()
