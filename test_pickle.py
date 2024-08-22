@@ -59,6 +59,10 @@ class TestPickle():
         self.test_cases = [pair[0] for pair in self._test_case_map]
         self.test_status = {i: list() for i in range(len(self.test_cases) + 3)}         # Plus 3 for the test on requirement #9
 
+        for _ in range(3):
+            self.test_status[len(self.test_cases)] = [9]
+
+
     def traceability_matrix(self):
         headers = [
             "Requirement ID", "Requirement Description", "Test Case ID", "Test Case Status", "Comments"
