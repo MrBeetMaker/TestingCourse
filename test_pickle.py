@@ -30,7 +30,7 @@ class TestPickle():
     def pickle_and_unpickle(self, data):
         """Returns data after it has been pickled and unpickled."""
         pickled_data = pickle.dumps(data, protocol=self.protocol)
-        unpickled_data = pickle.loads(pickled_data)
+        unpickled_data = pickle.load(pickled_data)
         return unpickled_data
 
     @property
