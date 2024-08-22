@@ -1,9 +1,8 @@
 import pickle
 import platform
 import sys
-import csv
 import hashlib
-
+from time import perf_counter
 
 class TestPickle():
 
@@ -104,11 +103,25 @@ class TestPickle():
             print(
                 f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
+    def test_duration_deviation(self, iterations=10000):
+
+        max_deviation = 0.001      # Seconds
+
+        for test_nr, test_case in enumerate(self.test_cases):
+
+            durations = []
+            for _ in range(iterations):
+                start = perf_counter()
+                pickle.dumps(test_case, protocol=self.protocol)
+                durations.append(perf_counter() - start)
+
+            if max(durations) - min(durations) > max_deviation:
+                print("FUCK")
+
     def test_for_mismatches(self, iterations=10000):
         """Pickles the same data many times to see if the result is always the same."""
         errors = []
-        print(
-            f"Pickling each test case {iterations} times to find mismatches:")
+        print(f"Pickling each test case {iterations} times to find mismatches:")
         for test_nr, test_case in enumerate(self.test_cases):
             first_pickled_data = pickle.dumps(
                 test_case, protocol=self.protocol)
