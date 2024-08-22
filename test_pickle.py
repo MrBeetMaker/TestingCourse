@@ -11,6 +11,7 @@ class TestPickle():
         python_version = sys.version.split()[0]
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
+        self.delim = '|^^|'
         print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
         self.requirements = {
@@ -29,22 +30,17 @@ class TestPickle():
             (1337,                      1),
             (2 ** 63 - 1,               1),
             (-(2 ** 63 - 1),            1),
-
             (2**63 + 100,               2),
             (2**64 - 1,                 2),
             (2**64,                     2),
-
             (10.0,                      3),
             (0.000280000000015,         3),
-
             (0.1234567890123456,                            4),
             (0.1234567890123456789,                         4),
             (987654321.123456789012345678901234,            4),
-
             ("No one inspects the spammish repetition",     5),
             ("e" * 128,                                     5),
             ("",                                            5),
-
             ([],                        7),
             ([0.324],                   7),
             ([234],                     7),
@@ -142,19 +138,19 @@ class TestPickle():
 
         # Save the data
         with open(self.file_name, "a") as f:
-            f.write(f"{test_nr};{pickled_data_1};{pickled_data_2};{repickled_data};{phash};{re_phash}\n")
+            f.write(f"{test_nr}{self.delim}{pickled_data_1}{self.delim}{pickled_data_2}{self.delim}{repickled_data}{self.delim}{phash}{self.delim}{re_phash}\n")
 
         return unpickled_data
 
     def validate_test_results(self):
 
         with open(self.file_name) as file:
-            results = csv.reader(file, delimiter= ";")
+            results = file.read().splitlines()
 
             results_msg = ""
             for res in results:
 
-                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res
+                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res.split(self.delim)
 
                 errors = 0
                 error_msg = ""
