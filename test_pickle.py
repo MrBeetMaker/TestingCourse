@@ -21,7 +21,7 @@ class TestPickle():
             3: "Pickling and unpickling floats with less than 16 decimals.",
             4: "Pickling and unpickling floats with 16 or more decimals.",
             5: "Pickling and unpickling strings with 128 characters or less.",
-            6: "",
+            6: "Pickling and unpickling special characters",
             7: "Pickling and unpickling lists of floats, integers, and strings with 64 elements or less should return equivalent output.",
             8: "Pickling and unpickling tuples and sets should maintain the order of elements.",
             9: "Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than 10 milliseconds."
@@ -47,13 +47,15 @@ class TestPickle():
             ("e" * 128,                                     5),
             ("",                                            5),
 
+            ("\u3244, \f ,\b,\n,\"",                        6),
+
             ([],                        7),
             ([0.324],                   7),
             ([234],                     7),
             (["ddsf"],                  7),
             ([0.324, 234, "3dsf"],        7),
             ([i for i in range(64)],    7),
-            ([i for i in range(65)],    7),
+            # ([i for i in range(65)],    7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
         ]
@@ -140,8 +142,7 @@ class TestPickle():
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
-        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(
-            data)
+        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
 
         # Save the data
         with open(self.file_name, "a") as f:
