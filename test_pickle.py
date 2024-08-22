@@ -12,8 +12,8 @@ class TestPickle():
         python_version = sys.version.split()[0]
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
-        print(
-            f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+        self.delim = '|^^|'
+        print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
         self.requirements = {
             1: "Pickling and unpickling integers within and at the edges of the signed 64-bit range.",
@@ -154,12 +154,12 @@ class TestPickle():
     def validate_test_results(self):
 
         with open(self.file_name) as file:
-            results = csv.reader(file, delimiter=";")
+            results = file.read().splitlines()
 
             results_msg = ""
             for res in results:
 
-                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res
+                test_nr, pickled_data_1, pickled_data_2, repickled_data, phash, re_phash = res.split(self.delim)
 
                 errors = 0
                 error_msg = ""
