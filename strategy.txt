@@ -36,7 +36,7 @@ Steps to Create a Traceability Matrix
     Execute Test Cases:
         Run the test cases and record the results.
     Update the Matrix:
-        Reflect the status of each test case in the matrix.
+        Reflect the status of each test case in the matrix
 
 . . . 
 
