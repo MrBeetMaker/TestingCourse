@@ -56,7 +56,6 @@ class TestPickle():
             ((),                                    8),
         ]
 
-
         self.test_cases = [pair[0] for pair in self._test_case_map]
         self.test_status = {i: list() for i in range(len(self.test_cases))}
 
@@ -83,11 +82,11 @@ class TestPickle():
                 if req_id == req_id_test:
                     status = "Fail"
                     comment = ""
-                    if not self.test_status[test_id]:
+                    if len(value) == 1:
                         status = "Success"
 
                     else:
-                        comment = self.test_status[test_id][0][1]
+                        comment = value[2]
 
                     row = [
                         f"REQ-{req_id}",
@@ -147,7 +146,7 @@ class TestPickle():
             if unpickled != original:
                 msg = f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}"
                 print(msg)
-                self.test_cases[test_nr].append((False, msg))
+                self.test_cases[test_nr].append(msg)
                 nr_of_changed_objects += 1
 
         if nr_of_changed_objects:
@@ -155,7 +154,8 @@ class TestPickle():
             print(msg)
 
         else:
-            print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
+            print(
+                f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
     def test_pickle_duration_stability(self, iterations=100000):
 
@@ -197,7 +197,7 @@ class TestPickle():
                     m_string += f"\n\t\t{m}"
                 msg = f"\tTest case #{test_nr}:{m_string}"
                 print(msg)
-                self.test_status[test_nr].append((False, msg))
+                self.test_status[test_nr].append(msg)
 
             else:
                 print(f"\tTest case #{test_nr}: - no mismatch")
@@ -234,21 +234,21 @@ class TestPickle():
 
                     error_msg += "\t- Different pickles for same data.\n"
                     print(error_msg)
-                    self.test_status[int(test_nr)].append((False, error_msg))
+                    self.test_status[int(test_nr)].append(error_msg)
                     errors += 1
                 if not pickled_data_1 == repickled_data:
                     error_msg += "\t- Repickled data different than first pickle.\n"
-                    self.test_status[int(test_nr)].append((False, error_msg))
+                    self.test_status[int(test_nr)].append(error_msg)
 
                     errors += 1
                 if not pickled_data_2 == repickled_data:
                     error_msg += "\t- Repickled data different than second pickle.\n"
-                    self.test_status[int(test_nr)].append((False, error_msg))
+                    self.test_status[int(test_nr)].append(error_msg)
 
                     errors += 1
                 if not phash == re_phash:
                     error_msg += "\t- Hash different for repickled data.\n"
-                    self.test_status[int(test_nr)].append((False, error_msg))
+                    self.test_status[int(test_nr)].append(error_msg)
                     errors += 1
 
                 results_msg += f"Test case #{test_nr}:\n\t- Errors: {errors}\n{error_msg}"
