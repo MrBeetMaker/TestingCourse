@@ -13,7 +13,8 @@ class TestPickle():
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
         self.delim = '|^^|'
-        print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+        print(
+            f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
         self.max_deviation = 0.001          # Seconds (for requirement 9).
 
@@ -57,7 +58,9 @@ class TestPickle():
         ]
 
         self.test_cases = [pair[0] for pair in self._test_case_map]
-        self.test_status = {i: list() for i in range(len(self.test_cases) + 3)}         # Plus 3 for the test on requirement #9
+        # Plus 3 for the test on requirement #9
+        self.test_status = {i: [pair[1]]
+                            for i, pair in enumerate(self._test_case_map)}
 
     def traceability_matrix(self):
         headers = [
@@ -78,7 +81,8 @@ class TestPickle():
         print(header_row)
         print("-" * len(header_row))
         for req_id, req_info in self.requirements.items():
-            for test_id, (test_case, req_id_test) in enumerate(self._test_case_map):
+            for test_id, value in self.test_status.items():
+                req_id_test = value[0]
                 if req_id == req_id_test:
                     status = "Fail"
                     comment = ""
