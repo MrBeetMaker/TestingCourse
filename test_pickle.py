@@ -60,7 +60,7 @@ class TestPickle():
         self.test_cases = [pair[0] for pair in self._test_case_map]
         # Plus 3 for the test on requirement #9
         self.test_status = {i: [pair[1]]
-                            for i, pair in enumerate(self._test_case_map + ("", 9) * 3)}
+                            for i, pair in enumerate(self._test_case_map + ("", 9) + ("", 9) + ("", 9))}
 
 
     def traceability_matrix(self):
