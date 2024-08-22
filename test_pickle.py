@@ -135,8 +135,7 @@ class TestPickle():
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
-        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(
-            data)
+        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
 
         # Save the data
         with open(self.file_name, "a") as f:
