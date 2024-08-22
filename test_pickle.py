@@ -13,7 +13,8 @@ class TestPickle():
         self.file_name = f"results_{os_info}_{python_version}.csv"
         self.protocol = 5
         self.delim = '|^^|'
-        print(f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
+        print(
+            f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
         self.requirements = {
             1: "Pickling and unpickling integers within and at the edges of the signed 64-bit range.",
@@ -53,13 +54,14 @@ class TestPickle():
             ([0.324],                   7),
             ([234],                     7),
             (["ddsf"],                  7),
-            ([0.324, 234, "3dsf"],        7),
+            ([0.324, 234, "3dsf"],      7),
             ([i for i in range(64)],    7),
-            # ([i for i in range(65)],    7),
+            ([i for i in range(65)],    7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
         ]
         self.test_cases = [pair[0] for pair in self._test_case_map]
+        self.test_status = {i: list() for i in range(len(self.test_cases))}
 
     def pickle_and_hash(self, data) -> tuple:
         """Returns the hash and the pickled data."""
@@ -100,13 +102,15 @@ class TestPickle():
         for test_nr, (original, unpickled) in enumerate(zip(self.test_cases, unpickled_data)):
 
             if unpickled != original:
-                print(
-                    f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}")
+                msg = f"Test case #{test_nr} was changed after being pickled:\n\t{original} != {unpickled}"
+                print(msg)
+                self.test_cases[test_nr].append((False, msg))
                 nr_of_changed_objects += 1
 
         if nr_of_changed_objects:
-            print(
-                f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n")
+            msg = f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n"
+            print(msg)
+
         else:
             print(
                 f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
@@ -132,7 +136,10 @@ class TestPickle():
                 m_string = ""
                 for m in mismatch:
                     m_string += f"\n\t\t{m}"
-                print(f"\tTest case #{test_nr}:{m_string}")
+                msg = f"\tTest case #{test_nr}:{m_string}"
+                print(msg)
+                self.test_status[test_nr].append((False, msg))
+
             else:
                 print(f"\tTest case #{test_nr}: - no mismatch")
 
@@ -142,12 +149,13 @@ class TestPickle():
 
         phash, pickled_data_1 = self.pickle_and_hash(data)
 
-        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(data)
+        re_phash, pickled_data_2, unpickled_data, repickled_data = self.pickle_unpickle_repickle_and_hash(
+            data)
 
         # Save the data
         with open(self.file_name, "a") as f:
             f.write(
-                f"{test_nr};{pickled_data_1};{pickled_data_2};{repickled_data};{phash};{re_phash}\n")
+                f"{test_nr}{self.delim}{pickled_data_1}{self.delim}{pickled_data_2}{self.delim}{repickled_data}{self.delim}{phash}{self.delim}{re_phash}\n")
 
         return unpickled_data
 
@@ -164,16 +172,24 @@ class TestPickle():
                 errors = 0
                 error_msg = ""
                 if not pickled_data_1 == pickled_data_2:
+
                     error_msg += "\t- Different pickles for same data.\n"
+                    print(error_msg)
+                    self.test_status[int(test_nr)].append((False, error_msg))
                     errors += 1
                 if not pickled_data_1 == repickled_data:
                     error_msg += "\t- Repickled data different than first pickle.\n"
+                    self.test_status[int(test_nr)].append((False, error_msg))
+
                     errors += 1
                 if not pickled_data_2 == repickled_data:
                     error_msg += "\t- Repickled data different than second pickle.\n"
+                    self.test_status[int(test_nr)].append((False, error_msg))
+
                     errors += 1
                 if not phash == re_phash:
                     error_msg += "\t- Hash different for repickled data.\n"
+                    self.test_status[int(test_nr)].append((False, error_msg))
                     errors += 1
 
                 results_msg += f"Test case #{test_nr}:\n\t- Errors: {errors}\n{error_msg}"
@@ -182,4 +198,6 @@ class TestPickle():
 
 
 if __name__ == "__main__":
-    TestPickle().run_tests()
+    test = TestPickle()
+    test.run_tests()
+    print(test.test_status)
