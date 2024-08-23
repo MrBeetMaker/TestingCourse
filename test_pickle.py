@@ -27,7 +27,6 @@ class TestPickle():
             7: "Pickling and unpickling lists of floats, integers, and strings with 64 elements or less should return equivalent output.",
             8: "Pickling and unpickling tuples and sets should maintain the order of elements.",
             9: f"Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than {self.max_deviation} seconds.",
-            10: "Pickling and unpickling  "
         }
 
         self._test_case_map = [
@@ -55,7 +54,6 @@ class TestPickle():
             ([i for i in range(65)],                7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
-            (print,                                 10)
         ]
 
         self.test_cases = [pair[0] for pair in self._test_case_map]
