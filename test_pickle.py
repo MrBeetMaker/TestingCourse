@@ -4,7 +4,6 @@ import sys
 import hashlib
 from time import perf_counter
 
-
 class TestPickle():
 
     def __init__(self) -> None:
@@ -16,7 +15,7 @@ class TestPickle():
         print(
             f"\nOutput file: {self.file_name}.\n\nNote: Content will be appended.\n")
 
-        self.max_deviation = 0.001          # Seconds (for requirement 9).
+        self.max_deviation = 0.001          # Seconds, for requirement 9.
 
         self.requirements = {
             1: "Pickling and unpickling integers within and at the edges of the signed 64-bit range.",
@@ -27,7 +26,8 @@ class TestPickle():
             6: "Pickling and unpickling special characters",
             7: "Pickling and unpickling lists of floats, integers, and strings with 64 elements or less should return equivalent output.",
             8: "Pickling and unpickling tuples and sets should maintain the order of elements.",
-            9: f"Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than {self.max_deviation} seconds."
+            9: f"Time needed to pickle integers and floats within the unsigned 64-bit range, as well as equal-sized strings should never differ by more than {self.max_deviation} seconds.",
+            10: "Pickling and unpickling  "
         }
 
         self._test_case_map = [
@@ -55,13 +55,13 @@ class TestPickle():
             ([i for i in range(65)],                7),
             (("1", "2", "3", "4", "5", "6"),        8),
             ((),                                    8),
+            (print,                                 10)
         ]
 
         self.test_cases = [pair[0] for pair in self._test_case_map]
         # Plus 3 for the test on requirement #9
         self.test_status = {i: [pair[1]]
-                            for i, pair in enumerate(self._test_case_map + ("", 9) + ("", 9) + ("", 9))}
-
+                            for i, pair in enumerate(self._test_case_map)}
 
     def traceability_matrix(self):
         headers = [
@@ -157,12 +157,13 @@ class TestPickle():
         if nr_of_changed_objects:
             msg = f"Pickling changed {nr_of_changed_objects} out of {len(unpickled_data)} objects.\n"
             print(msg)
-
         else:
-            print(
-                f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
+            print(f"Pickling did not change any of the {len(unpickled_data)} objects.\n")
 
     def test_pickle_duration_stability(self, iterations=100000):
+
+        for i in range(3):
+            self.test_status[len(self.test_cases) + i] = [9]        # Requirement 9
 
         for test_nr, test_case in enumerate(self.test_cases):
 
